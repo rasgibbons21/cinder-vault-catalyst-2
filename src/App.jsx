@@ -1,4 +1,4 @@
-App.jsximport { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 /* ═══════════════════════════════════════════════════════════════════
    CINDER VAULT MOMENTUM CATALYST
@@ -99,8 +99,8 @@ const PLANS = [
       "Unlimited tickers",
       "Unlimited AI analyses",
       "Full trade context breakdown",
-      "Watch zones & entry logic",
-      "Stop-loss & target logic",
+      "Watch zones &amp; entry logic",
+      "Stop-loss &amp; target logic",
       "Risk/reward estimates",
       "News + sentiment feed",
       "Discipline warnings",
@@ -1143,7 +1143,7 @@ function SetupGuidePage() {
     },
     {
       num: "3",
-      title: "Supabase — Database & Auth (Free tier available)",
+      title: "Supabase — Database &amp; Auth (Free tier available)",
       desc: "Persistent watchlists, user accounts, saved analysis history, and subscription management.",
       actions: [
         { label: "Go to", link: "https://supabase.com", text: "supabase.com" },
@@ -1196,7 +1196,7 @@ function SetupGuidePage() {
     <div className="fade">
       <div className="mb-20">
         <div style={{ fontFamily: "Bebas Neue,serif", fontSize: 28, letterSpacing: "3px", color: T.white, marginBottom: 6 }}>
-          API Setup & Deployment Guide
+          API Setup &amp; Deployment Guide
         </div>
         <div style={{ fontSize: 12, color: T.muted }}>
           Everything you need to take this from artifact to live product
