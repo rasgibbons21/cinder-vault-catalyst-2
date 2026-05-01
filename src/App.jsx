@@ -358,7 +358,7 @@ body{background:${T.bg};color:${T.white};font-family:'Sora',sans-serif;-webkit-f
 /* Price */
 .price-xl{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:500;line-height:1}
 .price-chg{font-family:'IBM Plex Mono',monospace;font-size:12px;margin-top:4px}
-.ticker-lbl{font-size:10px;color:${T.muted};margin-bottom:3px}
+.ticker-lbl{font-size:10px;color:#8080a8;margin-bottom:3px}
 
 /* Stats pills */
 .stats-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
@@ -419,11 +419,11 @@ body{background:${T.bg};color:${T.white};font-family:'Sora',sans-serif;-webkit-f
 .news-src{color:${T.gold}}
 
 /* Disclaimer */
-.disclaimer{background:rgba(201,168,76,.05);border:1px solid rgba(201,168,76,.14);border-radius:9px;padding:10px 13px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:${T.muted};line-height:1.65;display:flex;align-items:flex-start;gap:8px}
+.disclaimer{background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.2);border-radius:9px;padding:10px 13px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8888b0;line-height:1.65;display:flex;align-items:flex-start;gap:8px}
 
 /* Expand btn */
-.expand-btn{width:100%;background:transparent;border:none;border-top:1px solid ${T.border};padding:8px;color:${T.muted};font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
-.expand-btn:hover{background:rgba(201,168,76,.04);color:${T.gold}}
+.expand-btn{width:100%;background:rgba(201,168,76,.04);border:none;border-top:1px solid ${T.borderHi};padding:9px;color:#7878a8;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.expand-btn:hover{background:rgba(201,168,76,.08);color:${T.gold}}
 
 /* Skeleton */
 .skel{background:linear-gradient(90deg,${T.surface} 25%,${T.card} 50%,${T.surface} 75%);background-size:400px 100%;animation:shimmer 1.4s infinite;border-radius:5px}
@@ -466,9 +466,9 @@ body{background:${T.bg};color:${T.white};font-family:'Sora',sans-serif;-webkit-f
 .plan-name{font-family:'Bebas Neue',serif;font-size:20px;letter-spacing:2px;color:${T.white};margin-bottom:4px}
 .plan-price{font-family:'IBM Plex Mono',monospace;font-size:32px;font-weight:500;color:${T.gold};line-height:1}
 .plan-period{font-family:'IBM Plex Mono',monospace;font-size:10px;color:${T.muted};margin-top:2px;margin-bottom:12px}
-.plan-desc{font-size:12px;color:${T.mutedLt};margin-bottom:16px;line-height:1.5}
+.plan-desc{font-size:12px;color:#9090b8;margin-bottom:16px;line-height:1.5}
 .plan-features{flex:1;margin-bottom:20px}
-.plan-feat{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:12px;color:${T.mutedLt};line-height:1.4}
+.plan-feat{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:12px;color:#9090b8;line-height:1.4}
 .plan-feat-check{color:${T.green};flex-shrink:0;margin-top:1px}
 .plan-badge{position:absolute;top:14px;right:14px}
 
@@ -481,8 +481,8 @@ body{background:${T.bg};color:${T.white};font-family:'Sora',sans-serif;-webkit-f
 /* Setup guide */
 .setup-step{display:flex;gap:12px;padding:14px;background:${T.surface};border:1px solid ${T.border};border-radius:10px;margin-bottom:10px}
 .step-num{width:26px;height:26px;border-radius:7px;background:rgba(201,168,76,.1);border:1px solid ${T.goldDk};display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;color:${T.gold};flex-shrink:0}
-.step-title{font-size:13px;font-weight:600;color:${T.white};margin-bottom:3px}
-.step-desc{font-size:12px;color:${T.muted};line-height:1.55}
+.step-title{font-size:13.5px;font-weight:600;color:${T.white};margin-bottom:3px}
+.step-desc{font-size:12.5px;color:#9090b8;line-height:1.55}
 .code-block{background:${T.bg};border:1px solid ${T.border};border-radius:7px;padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:${T.goldLt};margin-top:6px;user-select:all}
 
 /* Fade */
@@ -810,7 +810,7 @@ function StockCard({ ticker, onRemove }) {
               </div>
               <div className="score-num" style={{ color: tier.color }}>{analysis.catalystScore}</div>
             </div>
-            <div style={{ fontSize: 12, color: T.mutedLt, lineHeight: 1.6 }}>{analysis.newsSummary}</div>
+            <div style={{ fontSize: 12.5, color: "#a0a0c8", lineHeight: 1.65 }}>{analysis.newsSummary}</div>
           </div>
         )}
 
@@ -891,8 +891,9 @@ function ScannerPage({ user }) {
     <div>
       <div className="flex items-start justify-between mb-16 flex-wrap gap-10">
         <div className="flex items-center gap-12">
-          <img src="/logo.png" alt="Cinder Vault Capital"
-            style={{ width:48, height:48, borderRadius:10, objectFit:"cover", objectPosition:"center", flexShrink:0, border:`1px solid ${T.goldDk}`, boxShadow:`0 0 20px rgba(201,168,76,0.15)` }} />
+          <div style={{ width:52, height:52, borderRadius:12, overflow:"hidden", flexShrink:0, background:"#0a0a0a", border:`1px solid ${T.goldDk}`, boxShadow:`0 0 20px rgba(201,168,76,0.15)`, display:"flex", alignItems:"center", justifyContent:"center" }}>
+            <img src="/logo.png" alt="Cinder Vault Capital" style={{ width:50, height:50, objectFit:"contain" }} />
+          </div>
           <div>
             <div style={{ fontFamily:"Bebas Neue,serif", fontSize:26, letterSpacing:"3px", color:T.white, lineHeight:1 }}>
               Catalyst Intelligence Engine
@@ -1226,16 +1227,17 @@ function SetupGuidePage() {
             <div className="step-desc mb-8">{step.desc}</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
               {step.actions.map((a, i) => (
-                <div key={i} style={{ fontSize: 12, color: T.mutedLt }}>
-                  {a.label && <span style={{ color: T.muted }}>• {a.label} </span>}
+                <div key={i} style={{ fontSize: 12.5, color: "#a0a0c8" }}>
+                  {a.label && <span style={{ color: "#8888b0" }}>• {a.label} </span>}
+                  {a.isConnected && <span style={{ color: T.green, fontWeight:600 }}>{a.text}</span>}
                   {a.link && <a href={a.link} target="_blank" rel="noopener noreferrer" style={{ color: T.blue, textDecoration: "none" }}>{a.text}</a>}
-                  {a.text && !a.link && <span style={{ color: T.white }}>{a.text}</span>}
+                  {a.text && !a.link && !a.isConnected && <span style={{ color: T.white }}>{a.text}</span>}
                   {a.code && <div className="code-block">{a.code}</div>}
                 </div>
               ))}
             </div>
             {step.note && (
-              <div style={{ marginTop: 10, padding: "8px 12px", background: "rgba(201,168,76,.06)", border: `1px solid rgba(201,168,76,.15)`, borderRadius: 7, fontSize: 11, color: T.muted, lineHeight: 1.55 }}>
+              <div style={{ marginTop: 10, padding: "9px 13px", background: "rgba(201,168,76,.07)", border: `1px solid rgba(201,168,76,.18)`, borderRadius: 7, fontSize: 11.5, color: "#9090b8", lineHeight: 1.6 }}>
                 💡 {step.note}
               </div>
             )}
@@ -1569,8 +1571,10 @@ export default function App() {
         {/* Topbar */}
         <div className="topbar">
           <div className="logo-wrap">
-            <img src="/logo.png" alt="Cinder Vault Capital"
-              style={{ width:38, height:38, borderRadius:8, objectFit:"cover", objectPosition:"center", flexShrink:0, border:`1px solid ${T.goldDk}` }} />
+            <div style={{ width:40, height:40, borderRadius:10, overflow:"hidden", flexShrink:0, background:"#0a0a0a", border:`1px solid ${T.goldDk}`, display:"flex", alignItems:"center", justifyContent:"center" }}>
+              <img src="/logo.png" alt="Cinder Vault Capital"
+                style={{ width:38, height:38, objectFit:"contain" }} />
+            </div>
             <div>
               <div className="logo-name">CINDER VAULT</div>
               <div className="logo-sub">Momentum Catalyst</div>
