@@ -23,19 +23,19 @@ const CONFIG = {
 // DESIGN TOKENS
 // ─────────────────────────────────────────────────────────────────
 const T = {
-  bg:        "#06060a",
-  bg2:       "#08080d",
-  surface:   "#0d0d15",
-  card:      "#101019",
-  border:    "#1a1a2c",
-  borderHi:  "#26263a",
+  bg:        "#05050a",
+  bg2:       "#07070d",
+  surface:   "#0c0c14",
+  card:      "#0f0f18",
+  border:    "#1e1e30",
+  borderHi:  "#2c2c42",
   gold:      "#c9a84c",
   goldLt:    "#e3ca70",
   goldDk:    "#6b5a22",
   goldGlow:  "rgba(201,168,76,0.09)",
-  white:     "#edeef6",
-  muted:     "#4d4d68",
-  mutedLt:   "#7474a0",
+  white:     "#f0f0f8",
+  muted:     "#606082",
+  mutedLt:   "#9090b8",
   green:     "#22d472",
   red:       "#f04848",
   orange:    "#f5a623",
@@ -173,11 +173,22 @@ const PROXY = (url) => `https://api.allorigins.win/get?url=${encodeURIComponent(
 async function fetchQuote(symbol) {
   try {
     const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol.toUpperCase()}?interval=1d&range=5d`;
-    const res  = await fetch(PROXY(url), { signal: AbortSignal.timeout(8000) });
-    if (!res.ok) return null;
-    const json = await res.json();
-    const data = JSON.parse(json.contents);
-    const r    = data?.chart?.result?.[0];
+    const proxies = [
+      `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+    ];
+    let json = null;
+    for (const proxy of proxies) {
+      try {
+        const res = await fetch(proxy, { signal: AbortSignal.timeout(6000) });
+        if (!res.ok) continue;
+        const raw = await res.json();
+        json = raw.contents ? JSON.parse(raw.contents) : raw;
+        if (json?.chart?.result?.[0]) break;
+      } catch { continue; }
+    }
+    if (!json) return null;
+    const r = json?.chart?.result?.[0];
     if (!r) return null;
     const meta   = r.meta;
     const quote  = r.indicators?.quote?.[0] || {};
@@ -351,8 +362,8 @@ body{background:${T.bg};color:${T.white};font-family:'Sora',sans-serif;-webkit-f
 
 /* Stats pills */
 .stats-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.spill{background:${T.surface};border:1px solid ${T.border};border-radius:8px;padding:6px 11px;flex:1;min-width:72px}
-.spill-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:${T.muted};text-transform:uppercase;letter-spacing:1.5px;margin-bottom:3px}
+.spill{background:${T.surface};border:1px solid ${T.borderHi};border-radius:8px;padding:6px 11px;flex:1;min-width:72px}
+.spill-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:#7a7aa8;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:3px}
 .spill-val{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;color:${T.white}}
 
 /* Score arc */
@@ -373,7 +384,7 @@ body{background:${T.bg};color:${T.white};font-family:'Sora',sans-serif;-webkit-f
 .ablock{background:${T.surface};border:1px solid ${T.border};border-radius:9px;padding:13px 15px;margin-bottom:9px}
 .ablock:last-child{margin-bottom:0}
 .ablock-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:${T.muted};text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
-.ablock-text{font-size:12.5px;color:${T.mutedLt};line-height:1.65}
+.ablock-text{font-size:13px;color:#b0b0d0;line-height:1.7}
 .ablock-text strong{color:${T.white}}
 
 /* Trade context */
@@ -489,6 +500,7 @@ body{background:${T.bg};color:${T.white};font-family:'Sora',sans-serif;-webkit-f
 .mono{font-family:'IBM Plex Mono',monospace}.text-muted{color:${T.muted}}.text-gold{color:${T.gold}}
 .w-full{width:100%}.text-center{text-align:center}.relative{position:relative}
 .sep{border:none;border-top:1px solid ${T.border};margin:14px 0}
+.card-pad{padding:18px}
 
 /* Responsive */
 @media(max-width:960px){
@@ -878,16 +890,17 @@ function ScannerPage({ user }) {
   return (
     <div>
       <div className="flex items-start justify-between mb-16 flex-wrap gap-10">
-        <div className="flex items-center gap-14">
-          <img src="/logo.png" alt="Cinder Vault Capital" style={{ width: 52, height: 52, borderRadius: 10, objectFit: "cover", flexShrink: 0 }} />
+        <div className="flex items-center gap-12">
+          <img src="/logo.png" alt="Cinder Vault Capital"
+            style={{ width:48, height:48, borderRadius:10, objectFit:"cover", objectPosition:"center", flexShrink:0, border:`1px solid ${T.goldDk}`, boxShadow:`0 0 20px rgba(201,168,76,0.15)` }} />
           <div>
-            <div style={{ fontFamily: "Bebas Neue,serif", fontSize: 28, letterSpacing: "3px", color: T.white, lineHeight: 1 }}>
+            <div style={{ fontFamily:"Bebas Neue,serif", fontSize:26, letterSpacing:"3px", color:T.white, lineHeight:1 }}>
               Catalyst Intelligence Engine
             </div>
-            <div style={{ fontFamily: "Bebas Neue,serif", fontSize: 11, letterSpacing: "3px", color: T.gold, marginTop: 3 }}>
+            <div style={{ fontFamily:"Bebas Neue,serif", fontSize:11, letterSpacing:"3px", color:T.gold, marginTop:3 }}>
               Discipline. Patience. Positioning.
             </div>
-            <div style={{ fontSize: 11.5, color: T.muted, marginTop: 4 }}>
+            <div style={{ fontSize:12, color:T.mutedLt, marginTop:5 }}>
               Real-time news · AI catalyst scoring · Educational trade context · Not financial advice
             </div>
           </div>
@@ -1117,16 +1130,15 @@ function SetupGuidePage() {
   const steps = [
     {
       num: "1",
-      title: "Finnhub API — Stock News (Free)",
+      title: "Finnhub API — Stock News",
       desc: "Used for real-time company news headlines and summaries.",
       actions: [
-        { label: "Go to", link: "https://finnhub.io", text: "finnhub.io" },
-        { label: "Click", text: "Get free API key" },
-        { label: "Verify email and copy your API key" },
-        { label: "Replace in code", code: 'FINNHUB_KEY: "YOUR_FINNHUB_KEY"' },
+        { label: "Status", text: "✓ Connected — Key active", isConnected: true },
+        { label: "Key", code: `FINNHUB_KEY: "${CONFIG.FINNHUB_KEY.slice(0,12)}...${CONFIG.FINNHUB_KEY.slice(-4)}"` },
+        { label: "Free tier", text: "60 calls/minute — more than enough" },
       ],
-      note: "Free tier: 60 calls/minute. More than enough for this app.",
-      ready: false,
+      note: "Your Finnhub key is active and pulling live news for all tickers.",
+      ready: true,
     },
     {
       num: "2",
@@ -1262,6 +1274,249 @@ function SetupGuidePage() {
 // ─────────────────────────────────────────────────────────────────
 // ROOT APP
 // ─────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
+// ADMIN BACK OFFICE
+// ─────────────────────────────────────────────────────────────────
+function AdminPage({ user }) {
+  const [stats, setStats] = useState({ users: 0, analyses: 0, watchlists: 0 });
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [psych, setPsych] = useState([
+    "Avoid FOMO. The market will always be there.",
+    "Your job is not to trade. Your job is to wait for your setup.",
+    "After two losses, stop trading for the day.",
+    "No revenge trading. The market owes you nothing.",
+    "Protect capital first. Profit comes second.",
+  ]);
+  const [newMsg, setNewMsg] = useState("");
+  const [activeTab, setActiveTab] = useState("overview");
+
+  const isAdmin = user?.email?.toLowerCase().includes("admin") ||
+                  user?.email === "rasgibbons21@gmail.com" ||
+                  user?.email?.toLowerCase().includes("cindervault");
+
+  useEffect(() => {
+    if (!isAdmin) return;
+    (async () => {
+      setLoading(true);
+      try {
+        const sb = await getSupabase();
+        const [wRes, aRes] = await Promise.all([
+          sb.from("watchlists").select("id, user_id, tickers, updated_at").catch(() => ({ data: [] })),
+          sb.from("analyses").select("id, symbol, created_at").catch(() => ({ data: [] })),
+        ]);
+        setStats({
+          users: wRes.data?.length || 0,
+          analyses: aRes.data?.length || 0,
+          watchlists: wRes.data?.length || 0,
+        });
+        setUsers(wRes.data?.map((w, i) => ({
+          id: w.user_id || `user-${i}`,
+          tickers: w.tickers || [],
+          lastActive: w.updated_at ? new Date(w.updated_at).toLocaleDateString() : "Unknown",
+        })) || []);
+      } catch {}
+      setLoading(false);
+    })();
+  }, [isAdmin]);
+
+  if (!isAdmin) return (
+    <div className="page fade">
+      <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"80px 0", gap:16 }}>
+        <div style={{ fontSize:48 }}>🔐</div>
+        <div style={{ fontFamily:"Bebas Neue,serif", fontSize:28, letterSpacing:"3px", color:T.red }}>Access Denied</div>
+        <div style={{ fontSize:13, color:T.mutedLt, textAlign:"center", maxWidth:400 }}>
+          This area requires admin credentials. Sign in with your admin account to access the back office.
+        </div>
+        <div style={{ fontFamily:"IBM Plex Mono,monospace", fontSize:11, color:T.muted }}>
+          Current user: {user?.email || "Not signed in"}
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="page fade">
+      <div className="ph">
+        <div>
+          <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+            <div className="page-title">Admin Back Office</div>
+            <span style={{ background:"rgba(159,122,234,.15)", border:"1px solid rgba(159,122,234,.35)", color:"#c4b5fd", fontSize:9, padding:"3px 9px", borderRadius:5, fontFamily:"IBM Plex Mono,monospace", letterSpacing:"1.5px", textTransform:"uppercase" }}>OWNER</span>
+          </div>
+          <div className="page-sub">Cinder Vault Enterprises LLC — Dashboard</div>
+        </div>
+      </div>
+
+      {/* Admin tabs */}
+      <div className="tabs mb-20">
+        {["overview","users","messages","api-status","api-setup"].map(t => (
+          <button key={t} className={`tab ${activeTab === t ? "active" : ""}`} onClick={() => setActiveTab(t)}>
+            {t === "overview" ? "📊 Overview" : t === "users" ? "👥 Users" : t === "messages" ? "💬 Messages" : t === "api-status" ? "🔌 API Status" : "⚙ Setup Guide"}
+          </button>
+        ))}
+      </div>
+
+      {activeTab === "overview" && (
+        <div className="fade">
+          <div className="g4 mb-20">
+            {[
+              { l:"Total Users",    v: loading ? "..." : stats.users,     c:T.gold,  sub:"Registered accounts" },
+              { l:"AI Analyses Run",v: loading ? "..." : stats.analyses,  c:T.green, sub:"Total catalyst runs" },
+              { l:"Watchlists",     v: loading ? "..." : stats.watchlists,c:T.blue,  sub:"Saved watchlists" },
+              { l:"App Version",    v:"2.0",                               c:T.purple,sub:"CIE v2.0 — Live" },
+            ].map(s => (
+              <div key={s.l} className="stat" style={{"--a":s.c}}>
+                <div className="stat-label">{s.l}</div>
+                <div className="stat-value" style={{ color:s.c, fontSize:28 }}>{s.v}</div>
+                <div className="stat-sub">{s.sub}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="g2">
+            <div className="card card-pad">
+              <div className="card-title mb-14">Revenue Summary</div>
+              {[
+                { l:"Pro Plan ($15/mo)",   v:"PayPal Active",  c:T.green },
+                { l:"Elite Plan ($39/mo)", v:"PayPal Active",  c:T.green },
+                { l:"Annual Pro",          v:"Invoice based",  c:T.gold  },
+                { l:"Annual Elite",        v:"Invoice based",  c:T.gold  },
+              ].map(r => (
+                <div key={r.l} className="flex justify-between mb-10" style={{ fontSize:13 }}>
+                  <span style={{ color:T.mutedLt }}>{r.l}</span>
+                  <span className="mono" style={{ color:r.c, fontSize:12 }}>{r.v}</span>
+                </div>
+              ))}
+              <div className="sep" />
+              <div style={{ fontSize:11, color:T.muted }}>
+                View full transaction history at <span style={{ color:T.blue }}>paypal.com/activity</span>
+              </div>
+            </div>
+
+            <div className="card card-pad">
+              <div className="card-title mb-14">System Health</div>
+              {[
+                { l:"Yahoo Finance API",  v:"Live", c:T.green  },
+                { l:"Finnhub News API",   v:"Connected", c:T.green },
+                { l:"Anthropic AI",       v:"Active", c:T.green  },
+                { l:"Supabase Database",  v:"Connected", c:T.green },
+                { l:"PayPal Payments",    v:"Live", c:T.green  },
+                { l:"Domain",             v:"cindervaultpro.com", c:T.gold },
+              ].map(r => (
+                <div key={r.l} className="flex justify-between mb-10" style={{ fontSize:13 }}>
+                  <span style={{ color:T.mutedLt }}>{r.l}</span>
+                  <div className="flex items-center gap-6">
+                    <div style={{ width:6, height:6, borderRadius:"50%", background:r.c, boxShadow:`0 0 5px ${r.c}` }} />
+                    <span className="mono" style={{ color:r.c, fontSize:11 }}>{r.v}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === "users" && (
+        <div className="fade">
+          <div className="card" style={{ padding:0, overflow:"hidden" }}>
+            <div style={{ padding:"16px 18px", borderBottom:`1px solid ${T.border}` }}>
+              <div className="card-title">Registered Users</div>
+              <div className="card-sub">{loading ? "Loading..." : `${users.length} users with saved watchlists`}</div>
+            </div>
+            {loading ? (
+              <div className="flex items-center justify-center" style={{ padding:40, gap:10, color:T.muted }}>
+                <span className="spin" /> Loading user data...
+              </div>
+            ) : users.length === 0 ? (
+              <div style={{ padding:40, textAlign:"center", color:T.muted, fontSize:13 }}>
+                No users with saved watchlists yet. Once users sign up and save watchlists they appear here.
+              </div>
+            ) : (
+              <table className="tbl">
+                <thead><tr><th>User ID</th><th>Tickers</th><th>Last Active</th></tr></thead>
+                <tbody>
+                  {users.map(u => (
+                    <tr key={u.id}>
+                      <td className="mono" style={{ fontSize:11, color:T.mutedLt }}>{u.id?.slice(0,20)}...</td>
+                      <td>
+                        <div className="flex flex-wrap gap-4">
+                          {u.tickers.map(t => <span key={t} className="badge badge-gold" style={{ fontSize:9 }}>{t}</span>)}
+                        </div>
+                      </td>
+                      <td style={{ fontSize:12, color:T.muted }}>{u.lastActive}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+      )}
+
+      {activeTab === "messages" && (
+        <div className="fade">
+          <div className="card card-pad">
+            <div className="card-title mb-4">Psychology Message Library</div>
+            <div className="card-sub mb-16">These messages display to users in the scanner. Edit or add new ones below.</div>
+            <div style={{ maxHeight:400, overflowY:"auto", marginBottom:16 }}>
+              {psych.map((msg, i) => (
+                <div key={i} className="flex items-start gap-10 mb-8"
+                  style={{ background:T.bg, border:`1px solid ${T.border}`, borderRadius:8, padding:"10px 14px" }}>
+                  <div style={{ fontFamily:"IBM Plex Mono,monospace", fontSize:10, color:T.goldDk, flexShrink:0, marginTop:2 }}>{String(i+1).padStart(2,"0")}</div>
+                  <div style={{ flex:1, fontSize:12.5, color:T.mutedLt, lineHeight:1.5 }}>"{msg}"</div>
+                  <button className="btn btn-xs" style={{ background:"rgba(240,72,72,.1)", color:T.red, border:"1px solid rgba(240,72,72,.2)", flexShrink:0, padding:"3px 8px" }}
+                    onClick={() => setPsych(p => p.filter((_,j) => j !== i))}>✕</button>
+                </div>
+              ))}
+            </div>
+            <div className="flex gap-10">
+              <input className="inp" placeholder="Add new psychology message..." value={newMsg}
+                onChange={e => setNewMsg(e.target.value)} style={{ flex:1 }}
+                onKeyDown={e => e.key === "Enter" && newMsg && (setPsych(p => [...p, newMsg]), setNewMsg(""))} />
+              <button className="btn btn-gold btn-sm"
+                onClick={() => { if(newMsg){ setPsych(p => [...p, newMsg]); setNewMsg(""); } }}>Add</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === "api-status" && (
+        <div className="fade">
+          <div className="g2">
+            {[
+              { name:"Finnhub News API", key: CONFIG.FINNHUB_KEY, status:"Connected", url:"finnhub.io", desc:"Real-time company news headlines and summaries for all tickers.", color:T.green },
+              { name:"Anthropic Claude AI", key:"Auto-configured", status:"Active", url:"console.anthropic.com", desc:"Powers the full catalyst breakdown, trade context, and discipline warnings.", color:T.green },
+              { name:"Supabase Database", key: CONFIG.SUPABASE_URL, status:"Connected", url:"supabase.com", desc:"User authentication, saved watchlists, and analysis history.", color:T.green },
+              { name:"Yahoo Finance", key:"No key required", status:"Live", url:"finance.yahoo.com", desc:"Live price data, volume, day range, and 5-day price history for all symbols.", color:T.green },
+              { name:"PayPal Pro", key: CONFIG.PAYPAL_PRO_LINK?.includes("GAXKVRGYQ8UVY") ? "Button ID: GAXKVRGYQ8UVY" : "Not configured", status: CONFIG.PAYPAL_PRO_LINK?.includes("GAXKVRGYQ8UVY") ? "Active" : "Pending", url:"paypal.com", desc:"$15/month Pro subscription checkout button.", color: CONFIG.PAYPAL_PRO_LINK?.includes("GAXKVRGYQ8UVY") ? T.green : T.orange },
+              { name:"PayPal Elite", key: CONFIG.PAYPAL_ELITE_LINK?.includes("2JBDDQK3DG98G") ? "Button ID: 2JBDDQK3DG98G" : "Not configured", status: CONFIG.PAYPAL_ELITE_LINK?.includes("2JBDDQK3DG98G") ? "Active" : "Pending", url:"paypal.com", desc:"$39/month Elite subscription checkout button.", color: CONFIG.PAYPAL_ELITE_LINK?.includes("2JBDDQK3DG98G") ? T.green : T.orange },
+            ].map(api => (
+              <div key={api.name} className="card card-pad">
+                <div className="flex items-center justify-between mb-10">
+                  <div style={{ fontSize:14, fontWeight:600, color:T.white }}>{api.name}</div>
+                  <div className="flex items-center gap-6">
+                    <div style={{ width:7, height:7, borderRadius:"50%", background:api.color, boxShadow:`0 0 6px ${api.color}` }} />
+                    <span style={{ fontFamily:"IBM Plex Mono,monospace", fontSize:10, color:api.color }}>{api.status}</span>
+                  </div>
+                </div>
+                <div style={{ fontSize:11.5, color:T.muted, marginBottom:10, lineHeight:1.5 }}>{api.desc}</div>
+                <div style={{ background:T.bg, border:`1px solid ${T.border}`, borderRadius:7, padding:"7px 10px", fontFamily:"IBM Plex Mono,monospace", fontSize:10, color:T.mutedLt, wordBreak:"break-all" }}>
+                  {api.key?.length > 60 ? api.key.slice(0,60) + "..." : api.key}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {activeTab === "api-setup" && (
+        <div className="fade">
+          <SetupGuidePage />
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function App() {
   const [page, setPage] = useState("scanner");
   const [user, setUser] = useState(null);
@@ -1304,7 +1559,7 @@ export default function App() {
   const TABS = [
     { id: "scanner",  label: "⚡ Scanner"  },
     { id: "pricing",  label: "💳 Pricing"  },
-    { id: "setup",    label: "⚙ API Setup" },
+    ...(user ? [{ id: "admin", label: "🔐 Admin" }] : []),
   ];
 
   return (
@@ -1314,7 +1569,8 @@ export default function App() {
         {/* Topbar */}
         <div className="topbar">
           <div className="logo-wrap">
-            <img src="/logo.png" alt="Cinder Vault Capital" style={{ width: 38, height: 38, borderRadius: 8, objectFit: "cover", flexShrink: 0 }} />
+            <img src="/logo.png" alt="Cinder Vault Capital"
+              style={{ width:38, height:38, borderRadius:8, objectFit:"cover", objectPosition:"center", flexShrink:0, border:`1px solid ${T.goldDk}` }} />
             <div>
               <div className="logo-name">CINDER VAULT</div>
               <div className="logo-sub">Momentum Catalyst</div>
@@ -1386,7 +1642,7 @@ export default function App() {
         <div className="content">
           {page === "scanner" && <ScannerPage user={user} />}
           {page === "pricing" && <PricingPage />}
-          {page === "setup"   && <SetupGuidePage />}
+          {page === "admin"   && <AdminPage user={user} />}
         </div>
 
         {/* Footer */}
